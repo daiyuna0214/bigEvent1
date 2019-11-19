@@ -44,7 +44,7 @@
         <div class="user_center_link">
             <a href="user.html" onclick="setMenu(3,0)" target="main_frame">个人中心</a>
             <img src="images/2.jpg" alt="person">
-            <a href="#"><i class="iconfont icon-tuichu"></i> 退出</a>
+            <a href="#" id="btnlogout"><i class="iconfont icon-tuichu"></i> 退出</a>
         </div>
     </div>
 
@@ -104,6 +104,22 @@
                 $('.level02').children().eq(n).addClass('active').siblings().removeClass('active');
             }
         }
+    </script>
+    <script>
+        //点击退出退出登录
+        $('#btnlogout').click(function() {
+            //点击退出弹框显示是否确认退出
+            if (confirm("确定退出") === false) {
+                // 如果取消，关闭窗口
+                return;
+            } else {
+                // 如果确认，掉退出接口，返回登录页
+                $.post('http://localhost:8000/admin/logout', function(res) {
+                    console.log(res);
+                    location.href = './login.html'
+                })
+            }
+        })
     </script>
 
 </body>
