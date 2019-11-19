@@ -15,5 +15,10 @@ var user = {
             console.log(res);
             callback(res)
         })
+    },
+    getInfo: function(callback) {
+        $.get(baseUrl + '/admin/getuser', function() {
+            callback(res)
+        })
     }
 }
