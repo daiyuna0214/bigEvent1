@@ -52,6 +52,7 @@
     <!-- /.modal -->
     <script src="./js/jquery-1.12.4.min.js"></script>
     <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./js/unit/user.js"></script>
     <script>
         //给登录按钮添加点击事件
         $('#btnlogin').click(function() {
@@ -66,20 +67,20 @@
                 return;
             }
             // 如果不为空则调用接口 登录成功 跳转到后台首页，登录失败，提示用户
-            $.post('http://localhost:8000/admin/login', {
-                user_name: username,
-                password: password
-            }, function(res) {
-                console.log(res);
-                if (res.code === 400) {
-                    $('#msgInfo').text(res.msg)
-                    $('#myModal').modal('show')
-                    return;
-                } else {
-                    location.href = './index.html';
-                }
-            });
-
+            // $.post('http://localhost:8000/admin/login', {
+            //     user_name: username,
+            //     password: password
+            // }, function(res) {
+            //     console.log(res);
+            //     if (res.code === 400) {
+            //         $('#msgInfo').text(res.msg)
+            //         $('#myModal').modal('show')
+            //         return;
+            //     } else {
+            //         location.href = './index.html';
+            //     }
+            // });
+            user.login(username, password)
 
         })
     </script>
