@@ -17,7 +17,7 @@ var user = {
         })
     },
     getInfo: function(callback) {
-        $.get(baseUrl + '/admin/getuser', function() {
+        $.get(baseUrl + '/admin/getuser', function(res) {
             callback(res)
         })
     }
