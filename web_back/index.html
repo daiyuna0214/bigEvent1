@@ -115,7 +115,11 @@
                 return;
             }
             // 如果确认，掉退出接口，返回登录页
-            user.logout()
+            user.logout(function() {
+                if (res.code === 200) {
+                    location.href = './login.html'
+                }
+            })
         })
     </script>
 

@@ -80,7 +80,16 @@
             //         location.href = './index.html';
             //     }
             // });
-            user.login(username, password)
+            user.login(username, password, function(res) {
+                console.log(res);
+                if (res.code === 400) {
+                    $('#msgInfo').text(res.msg)
+                    $('#myModal').modal('show')
+                    return;
+                } else {
+                    location.href = './index.html';
+                }
+            })
 
         })
     </script>
