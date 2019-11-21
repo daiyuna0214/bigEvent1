@@ -101,9 +101,13 @@
             }
         })
     </script>
+
+
+
     <script src="./js/unit/config.js"></script>
     <script src="./js/unit/category.js"></script>
     <script src="./js/template-web.js"></script>
+
 
     <!-- // 模板引擎 //1，引入template-web.js文件 //2，定义模板，注意指定script的id和type属性 //3，准备数据对象（变量，数组等） //4，调用template函数，为模板配数据，获得渲染结果 -->
     <script id="categoryTable" type="text/html">
@@ -113,19 +117,38 @@
             <td>{{item.slug}}</td>
             <td class="text-center">
                 <a href="javascript:;" class="btn btn-info btn-xs">编辑</a>
-                <a href="javascript:;" class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:;" data_id="{{item.id}}" class="btn btn-danger btn-xs del">删除</a>
             </td>
         </tr>
         {{/each}}
     </script>
-
-
     <script>
         // 显示文章
-        category.show(function(res) {
-            console.log(res);
-            var htmlStr = template('categoryTable', res);
-            $('#tbody').html(htmlStr)
+        function getAndshow() {
+            category.show(function(res) {
+                console.log(res);
+
+                var htmlStr = template('categoryTable', res);
+                $('#tbody').html(htmlStr)
+            });
+        }
+
+        getAndshow()
+
+        //删除文章
+        //因为删除标签是动态添加的，所以要通过事件委托来添加事件
+        $('#tbody').on('click', '.del', function() {
+            // console.log(this);
+
+            //获取自定义id
+            var id = $(this).attr('data_id')
+            console.log(id);
+
+            category.delete(id, function(res) {
+                console.log(res);
+                // 删除完成重新加载页面
+                getAndshow()
+            })
         })
     </script>
 </body>
