@@ -8,8 +8,15 @@ var category = {
     },
     delete: function(id, callback) {
         $.post(APIURLS.category_delete, { id: id }, function(res) {
-            console.log(res);
+            // console.log(res);
             callback(res)
+        })
+    },
+    add: function(name, slug, callback) {
+        $.post(APIURLS.category_add, { name: name, slug: slug }, function(res) {
+            callback(res);
+            console.log(res);
+
         })
     }
 }
