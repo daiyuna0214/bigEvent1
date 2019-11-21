@@ -39,7 +39,7 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
+                        <select class="form-control" id="select_content">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -80,6 +80,24 @@
         </div>
     </div>
 
+    <script src="./js/unit/config.js"></script>
+    <script src="./js/unit/category.js"></script>
+    <script src="./js/template-web.js"></script>
+    <script id="select_tem" type="text/html">
+        {{each data item idx}}
+        <option>{{item.name}}</option>
+        {{/each}}
+    </script>
+    <script>
+        //查询出所有的文章类型并显示
+        //可以直接调用之前 的show方法
+        category.show(function(res) {
+            console.log(res);
+            //用模板引擎将数据渲染到页面
+            var htmlstr = template("select_tem", res);
+            $('#select_content').html(htmlstr);
+        });
+    </script>
 </body>
 
 </html>
