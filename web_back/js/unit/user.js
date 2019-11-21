@@ -1,8 +1,7 @@
 // 模块化操作
-var baseUrl = 'http://localhost:8000';
 var user = {
     login: function(userName, userPassword, callback) {
-        $.post(baseUrl + '/admin/login', {
+        $.post(APIURLS.user_login, {
             user_name: userName,
             password: userPassword
         }, function(res) {
@@ -11,13 +10,13 @@ var user = {
         });
     },
     logout: function(callback) {
-        $.post(baseUrl + '/admin/logout', function(res) {
+        $.post(APIURLS.user_logout, function(res) {
             console.log(res);
             callback(res)
         })
     },
     getInfo: function(callback) {
-        $.get(baseUrl + '/admin/getuser', function(res) {
+        $.get(APIURLS.user_getInfo, function(res) {
             callback(res)
         })
     }

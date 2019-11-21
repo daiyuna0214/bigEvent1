@@ -3,7 +3,7 @@ var baseUrl = 'http://localhost:8000';
 var category = {
     show: function(callback) {
         // alert(123)
-        $.get(baseUrl + '/admin/category_search', function(res) {
+        $.get(APIURLS.category_show, function(res) {
             callback(res)
         })
     }
