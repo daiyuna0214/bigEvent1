@@ -6,5 +6,10 @@ var article = {
 
             callback(res);
         })
+    },
+    del: function(id, callback) {
+        $.get(APIURLS.article_delete, { id: id }, function(res) {
+            callback(res)
+        })
     }
 }
