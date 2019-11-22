@@ -1,7 +1,9 @@
 var article = {
-    show: function(callback) {
-        $.get(APIURLS.article_search, function(res) {
+    show: function(obj, callback) {
+        $.get(APIURLS.article_search, { page: obj.page, type: obj.type, state: obj.status }, function(res) {
             // console.log(res);
+            console.log(obj);
+
             callback(res);
         })
     }

@@ -29,11 +29,11 @@
                             <option>爱旅行</option> -->
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
-                            <option value="drafted">草稿</option>
-                            <option value="published">已发布</option>
+                            <option value="">所有状态</option>
+                            <option value="草稿">草稿</option>
+                            <option value="已发布">已发布</option>
                         </select>
-                        <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
+                        <button type="button" id="btnSearch" class="btn btn-default btn-sm">筛选</button>
                     </form>
                 </div>
                 <div class="col-xs-6">
@@ -246,8 +246,8 @@
             </table>
 
             <div class="row text-center">
-                <ul class="pagination pagination-sm">
-                    <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
+                <ul class="pagination pagination-sm" id="pagination">
+                    <!-- <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
                     <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
                     <li class="page-item active"><a href="#" class="page-link">1</a></li>
                     <li class="page-item"><a href="#" class="page-link">2</a></li>
@@ -257,7 +257,7 @@
                     <li class="page-item"><a href="#" class="page-link">6</a></li>
                     <li class="page-item"><a href="#" class="page-link">7</a></li>
                     <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
-                    <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
+                    <li class="page-item last"><a href="#" class="page-link">尾页</a></li> -->
                 </ul>
             </div>
 
@@ -266,6 +266,8 @@
 
 
     <script src="js/jquery-1.12.4.min.js"></script>
+    <!-- 引入分页插件 -->
+    <script src="./js/jquery.twbsPagination.js"></script>
     <script src="./js/unit/config.js"></script>
     <script src="./js/unit/category.js"></script>
     <script src="./js/unit/article.js"></script>
@@ -273,10 +275,11 @@
     <script src="./js/template-web.js"></script>
 
     <!-- 定义一个模板 -->
+    <!-- option如果加上value属性，那么获取他的value值时获取的就是value属性的值，而不是option里面的文本 -->
     <script id="allPublic" type="text/html">
-        <option>所有分类</option>
+        <option value=''>所有分类</option>
         {{each data item}}
-        <option>{{item.name}}</option>
+        <option value="{{item.id}}">{{item.name}}</option>
         {{/each}}
     </script>
 
@@ -302,28 +305,93 @@
         })
 
 
+        //定义一个全局变量表示当前页
+        var currentPage = 1;
+        // 定义一个全局变量表示当前类别
+        var type = '';
+        // 定义一个全局变量表示当前状态
+        var status = '';
+        //定义一个全局变量表示当前的总页数
+        var curTotalpage = '';
+        getAndshow()
+
+        // 筛选
+        $('#btnSearch').click(function() {
+            //获取类别和状态
+            //根据接口文件可知，传过去的参数type必须是文章类型的编号
+            //所以给每一类加value值
+            type = $('#selCategory').val()
+            status = $('#selStatus').val()
+                //然后再发请求
+            getAndshow()
+        })
+
+
+
+
+
 
         //文章列表所有分类显示
         //因为之前的方法含有显示所有的分类，所以直接调用即可
         category.show(function(res) {
             console.log(res);
+
+            //已经改变了查询的条件，所以应该重置为第一页的数据
+            currentPage = 1;
+
             //使用模板引擎将数据渲染到页面
             //调用template函数
             // var htmlstr=template(模板id，数据)
             var htmlstr = template("allPublic", res);
-            console.log(htmlstr);
-            //把字符串追加到父元素里面,渲染到页面
-            $('#selCategory').append(htmlstr);
+            // console.log(htmlstr);
+            //把字符串,渲染到页面
+            $('#selCategory').html(htmlstr);
         })
 
-        //文章搜索显示（标题）
-        article.show(function(res) {
-            console.log(res);
-            //使用模板引擎把数据渲染到页面
-            var htmlstring = template('tittleSearch', res);
-            console.log(htmlstring);
-            $('#table_list').append(htmlstring);
-        })
+
+
+
+        function getAndshow() {
+
+            //文章搜索显示（标题）
+            article.show({
+                'page': currentPage,
+                'type': type,
+                'status': status
+            }, function(res) {
+                console.log(res);
+                //使用模板引擎把数据渲染到页面
+                var htmlstring = template('tittleSearch', res);
+                // console.log(htmlstring);
+                $('#table_list').html(htmlstring);
+
+                // twbsPagination插件有一个bug：他不能及时的根据页数的不同来更新整个页码插件
+                // 解决方法如果当前查询的结果得到的总页数与上一次查询得到的总页数不相同，则需要
+                //销毁分页插件，以再次更新//销毁方法插件里面有说明、
+                if (res.totalPage != curTotalpage) {
+                    $('#pagination').twbsPagination('destroy')
+                }
+                //销毁完后把赋值
+                curTotalpage = res.totalPage;
+
+
+                //分页
+                $('#pagination').twbsPagination({
+                    totalPages: res.totalPage, //总页数
+                    visiblePages: 7, //可见页数
+                    initiateStartPageClick: false, //不要一打开就去触发点击事件 
+                    first: '首页',
+                    last: '尾页',
+                    next: '下一页',
+                    prev: '上一页',
+                    onPageClick: function(event, page) {
+                        alert(page)
+                        currentPage = page;
+                        getAndshow()
+                    }
+                });
+            })
+        }
     </script>
 
 </body>
