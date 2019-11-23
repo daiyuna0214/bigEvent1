@@ -11,5 +11,8 @@ var article = {
         $.get(APIURLS.article_delete, { id: id }, function(res) {
             callback(res)
         })
-    }
+    },
+    // publish:function(callback){
+    //     $.post()
+    // }
 }

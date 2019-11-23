@@ -10,4 +10,5 @@ var APIURLS = {
     category_edit: baseUrl + '/admin/category_edit',
     article_search: baseUrl + '/admin/search',
     article_delete: baseUrl + '/admin/article_delete',
+    // article_publish: baseUrl + '/admin /article_publish',
 }
