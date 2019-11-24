@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
-    <link type="text/css" rel="stylesheet" href="js/jedate/css/jedate.css">
     <script src="js/jquery-1.12.4.min.js"></script>
     <script src="js/jedate/js/jedate.js"></script>
     <script src="js/tinymce/js/tinymce/tinymce.min.js"></script>
     <script src="js/tinymce/js/tinymce_setup.js"></script>
+    <link type="text/css" rel="stylesheet" href="js/jedate/css/jedate.css">
 </head>
 
 <body>
@@ -23,29 +23,29 @@
             文章编辑
         </div>
         <div class="container-fluid common_con">
-            <form class="form-horizontal article_form">
+            <form class="form-horizontal article_form" id="myform">
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" value="文章标题文字">
+                        <input type="text" name="title" class="form-control" id="article_title" value="文章标题文字">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
                         <img src="images/pic06.jpg" class="article_cover">
-                        <input type="file" id="exampleInputFile">
+                        <input type="file" id="article_cover" name="cover">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
-                            <option>类别一</option>
+                        <select class="form-control" id="formControl" name="type">
+                            <!-- <option>类别一</option>
                             <option>类别二</option>
                             <option>类别三</option>
                             <option selected>类别四</option>
-                            <option>类别五</option>
+                            <option>类别五</option> -->
                         </select>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                     <div class="col-sm-4">
 
                         <div class="input-group">
-                            <input type="text" class="form-control" value="2019-05-17" id="dateinput">
+                            <input type="text" class="form-control" value="2019-05-17" id="article_date" name="date">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -78,6 +78,56 @@
         </div>
     </div>
 
+
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/unit/category.js"></script>
+    <script src=".//js/unit/article.js"></script>
+    <script src="./js/unit/config.js"></script>
+    <script src="./js/template-web.js"></script>
+
+    <script id="form_tem" type="text/html">
+        {{each data item}}
+        <option>{{item.name}}</option>
+        {{/each}}
+    </script>
+    <script>
+        //编辑文章
+        //在article_list.html里面给编辑按钮添加页面跳转，并传递id
+        //从地址栏中获取id
+        var id = location.search.substr(4);
+        // console.log(id);
+        // 根据id去搜索当前文章详情内容并显示在表单元素中
+        article.getDetial(id, function(res) {
+            console.log(res);
+            //获取文章类别并显示
+            category.show(function(result) {
+                // console.log(result);
+                //使用模板引擎把数据渲染到页面
+                var htmlstr = template('form_tem', result)
+                    // console.log(htmlstr);
+                $("#formControl").html(htmlstr);
+                //确保当前的文章对应的类型处于选中状态
+                $('#formControl').val(res.data.type);
+            });
+            $('#article_title').val(res.data.title);
+            $('#article_cover').prop('src', res.data.cover);
+            $('#article_date').val(res.data.date)
+            $('#rich_content').val(res.data.content)
+                //保存
+            var fd = new FormData(document.getElementById('myform'));
+            fd.append("id", id);
+            // 富文本编辑器获取内容:tinMCE.activeEditor.getContent()
+            // fd.set('content', tinyMCE.activeEditor.getContent())
+            article.edit(fd, function(res) {
+                console.log(res);
+                if (res.code === 200) {
+                    alert('修改成功')
+                } else {
+                    alert(res.msg)
+                }
+            })
+        });
+    </script>
 </body>
 
 </html>

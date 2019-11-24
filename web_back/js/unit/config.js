@@ -11,4 +11,6 @@ var APIURLS = {
     article_search: baseUrl + '/admin/search',
     article_delete: baseUrl + '/admin/article_delete',
     article_publish: baseUrl + '/admin/article_publish',
+    article_edit: baseUrl + '/admin/article_edit',
+    month_article_count: baseUrl + '/admin/month_article_count',
 }
