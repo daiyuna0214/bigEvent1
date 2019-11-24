@@ -12,7 +12,16 @@ var article = {
             callback(res)
         })
     },
-    // publish:function(callback){
-    //     $.post()
-    // }
+    publish: function(fd, callback) {
+        $.ajax({
+            url: APIURLS.article_publish,
+            type: 'post',
+            data: fd,
+            processData: false, //不要让jQuery处理formdata数据
+            contentType: false, //不要设置默认的请求头
+            success: function(res) {
+                callback(res)
+            }
+        })
+    }
 }

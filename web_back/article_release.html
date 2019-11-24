@@ -82,6 +82,7 @@
 
     <script src="./js/unit/config.js"></script>
     <script src="./js/unit/category.js"></script>
+    <script src="./js/unit/article.js"></script>
     <script src="./js/template-web.js"></script>
     <script id="select_tem" type="text/html">
         {{each data item idx}}
@@ -112,23 +113,16 @@
             // 富文本编辑器获取内容:tinMCE.activeEditor.getContent()
             fd.set('content', tinyMCE.activeEditor.getContent())
                 // 发ajax请求
-            $.ajax({
-                url: 'http://localhost:8000/admin/article_publish',
-                type: 'post',
-                data: fd,
-                processData: false, //不要让jQuery处理formdata数据
-                contentType: false, //不要设置默认的请求头
-                success: function(res) {
-                    console.log(res);
-                    if (res.code === 201) {
-                        alert('添加成功')
-                    } else {
-                        alert(res.msg)
-                    }
+            article.publish(fd, function(res) {
+                console.log(res);
+                if (res.code === 201) {
+                    alert('添加成功')
+                } else {
+                    alert(res.msg)
                 }
             })
 
-        })
+        });
     </script>
 </body>
 
