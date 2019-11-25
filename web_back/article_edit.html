@@ -40,7 +40,7 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control" id="formControl" name="type">
+                        <select class="form-control" id="formControl">
                             <!-- <option>类别一</option>
                             <option>类别二</option>
                             <option>类别三</option>
@@ -87,7 +87,7 @@
 
     <script id="form_tem" type="text/html">
         {{each data item}}
-        <option>{{item.name}}</option>
+        <option value="{{item.id}}">{{item.name}}</option>
         {{/each}}
     </script>
     <script>
@@ -120,11 +120,11 @@
             // fd.set('content', tinyMCE.activeEditor.getContent())
             article.edit(fd, function(res) {
                 console.log(res);
-                if (res.code === 200) {
-                    alert('修改成功')
-                } else {
-                    alert(res.msg)
-                }
+                // if (res.code === 200) {
+                //     alert('修改成功')
+                // } else {
+                //     alert(res.msg)
+                // }
             })
         });
     </script>
