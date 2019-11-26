@@ -81,14 +81,14 @@
             <form action="" class="comment_form">
                 <div class="form_group">
                     <label>用户名：</label>
-                    <input type="text" placeholder="请输入用户名" class="comment_name">
+                    <input type="text" placeholder="请输入用户名" class="comment_name" id="name">
                 </div>
                 <div class="form_group">
                     <label>评论内容：</label>
-                    <textarea placeholder="请发表您的评论" class="comment_input"></textarea>
+                    <textarea placeholder="请发表您的评论" class="comment_input" id="content"> </textarea>
                 </div>
                 <div class="form_group">
-                    <input type="submit" name="" value="评 论" class="comment_sub"></div>
+                    <input type="button" name="" id="btnAdd" value="评 论" class="comment_sub"></div>
             </form>
 
             <div class="comment_count">
@@ -96,14 +96,14 @@
             </div>
 
             <div class="comment_list_con">
-                <div class="comment_detail_list">
+                <div class="comment_detail_list" id="comment_detail_list">
                     <div class="person_pic fl">乔</div>
                     <div class="name_time fl"><b>虚竹</b><span>4小时前</span></div>
                     <div class="comment_text fl">
                         遏制茅台酒价格过快上涨，多渠道供给，就不一定要买，租茅台酒也可以的，租售同权。开发共有产权茅台酒，让老百姓喝得起茅台酒，饮者有其酒。
                     </div>
                 </div>
-                <div class="comment_detail_list">
+                <!-- <div class="comment_detail_list">
                     <div class="person_pic fl">段</div>
                     <div class="name_time fl"><b>虚竹</b><span>4小时前</span></div>
                     <div class="comment_text fl">
@@ -123,7 +123,7 @@
                     <div class="comment_text fl">
                         遏制茅台酒价格过快上涨，多渠道供给，就不一定要买，租茅台酒也可以的，租售同权。开发共有产权茅台酒，让老百姓喝得起茅台酒，饮者有其酒。
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="right_con setfl">
@@ -207,16 +207,28 @@
     <script src="./js/config.js"></script>
     <script src="./js/category.js"></script>
     <script src="./js/article.js"></script>
+    <script src="./js/comment.js"></script>
     <script id="show_temp" type="text/html">
         {{each data item}}
         <li><a href="#">{{item.name}}</a></li>
+        {{/each}}
+    </script>
+    <script id="comment_temp" type="text/html">
+        {{each data item}}
+        <div class="comment_detail_list">
+            <div class="person_pic fl">{{item.firstName}}</div>
+            <div class="name_time fl"><b>{{item.name}}</b><span>{{item.dt}}</span></div>
+            <div class="comment_text fl">
+                {{item.content}}
+            </div>
+        </div>
         {{/each}}
     </script>
     <script>
         //文章类别处理
         //显示文章类别
         category.show(function(res) {
-            console.log(res);
+            // console.log(res);
             //模板引擎把数据渲染到页面
             var htmlStr = template('show_temp', res);
             $('#level_two').html('<li class="up"></li>' + htmlStr);
@@ -225,10 +237,10 @@
         //根据id获取文章详情
         //获取id
         var id = location.search.substr(4);
-        console.log(id);
+        // console.log(id);
 
         article.getDetial(id, function(res) {
-            console.log(res);
+            // console.log(res);
             //把数据渲染到页面
             $('#article_title').html(res.data.title)
             $('#article_author').html(res.data.author)
@@ -242,14 +254,49 @@
             category.show(function(result) {
                 //在res.data里面找出id为1的元素
                 var re = result.data.find(function(item) {
-                    if (item.id = res.data.type) {
-                        return true;
-                    }
-                })
-                console.log(re); //{id: "1", name: "科学", slug: "kexue"}
+                        if (item.id = res.data.type) {
+                            return true;
+                        }
+                    })
+                    // console.log(re); //{id: "1", name: "科学", slug: "kexue"}
                 $('#article_type').html(re.name)
                 $('#keji').html(re.name)
             })
+        })
+
+        //发表评论
+        $('#btnAdd').click(function() {
+                //获取用户名
+                var name = $('#name').val()
+                var content = $('#content').val()
+                    // 判断内容是否为空
+                if (name === '' || content === '') {
+                    alert('不能为空')
+                    return;
+                }
+                //如果内容不为空则发请求
+                comment.postComment(name, content, id, function(res) {
+                    // console.log(res);
+                    if (res.code === 200) {
+                        alert('添加评论成功');
+                    } else {
+                        alert(res.msg)
+                    }
+                })
+            })
+            //获取评论
+        comment.getComment(id, function(res) {
+            console.log(res);
+            res.data.reverse()
+            res.data.forEach(function(item) {
+                    console.log(item);
+                    item.firstName = item.name.substr(0, 1)
+                })
+                // 模板引擎吧数据渲染到页面
+            var htmlStr = template('comment_temp', res);
+            // console.log(htmlStr);
+
+            $('#comment_detail_list').html(htmlStr)
         })
     </script>
 </body>
