@@ -208,6 +208,10 @@
     <script src="./js/category.js"></script>
     <script src="./js/article.js"></script>
     <script src="./js/comment.js"></script>
+    <script src="./js/dayjs.min.js"></script>
+    <script src="./js/relative.min.js"></script>
+    <script src="https://unpkg.com/dayjs/locale/zh-cn"></script>
+
     <script id="show_temp" type="text/html">
         {{each data item}}
         <li><a href="#">{{item.name}}</a></li>
@@ -217,7 +221,7 @@
         {{each data item}}
         <div class="comment_detail_list">
             <div class="person_pic fl">{{item.firstName}}</div>
-            <div class="name_time fl"><b>{{item.name}}</b><span>{{item.dt}}</span></div>
+            <div class="name_time fl"><b>{{item.name}}</b><span>{{item.relitiveDt}}</span></div>
             <div class="comment_text fl">
                 {{item.content}}
             </div>
@@ -234,10 +238,12 @@
             $('#level_two').html('<li class="up"></li>' + htmlStr);
             $('#left_menu').html(htmlStr);
         });
+
         //根据id获取文章详情
         //获取id
         var id = location.search.substr(4);
         // console.log(id);
+
 
         article.getDetial(id, function(res) {
             // console.log(res);
@@ -264,40 +270,55 @@
             })
         })
 
+
         //发表评论
         $('#btnAdd').click(function() {
-                //获取用户名
-                var name = $('#name').val()
-                var content = $('#content').val()
-                    // 判断内容是否为空
-                if (name === '' || content === '') {
-                    alert('不能为空')
-                    return;
+            //获取用户名
+            var name = $('#name').val()
+            var content = $('#content').val()
+                // 判断内容是否为空
+            if (name === '' || content === '') {
+                alert('不能为空')
+                return;
+            }
+            //如果内容不为空则发请求
+            comment.postComment(name, content, id, function(res) {
+                // console.log(res);
+                if (res.code === 200) {
+                    alert('添加评论成功');
+                    // 重新渲染页面
+                    getAndShow();
+                } else {
+                    alert(res.msg)
                 }
-                //如果内容不为空则发请求
-                comment.postComment(name, content, id, function(res) {
-                    // console.log(res);
-                    if (res.code === 200) {
-                        alert('添加评论成功');
-                    } else {
-                        alert(res.msg)
-                    }
-                })
             })
-            //获取评论
-        comment.getComment(id, function(res) {
-            console.log(res);
-            res.data.reverse()
-            res.data.forEach(function(item) {
-                    console.log(item);
-                    item.firstName = item.name.substr(0, 1)
-                })
-                // 模板引擎吧数据渲染到页面
-            var htmlStr = template('comment_temp', res);
-            // console.log(htmlStr);
-
-            $('#comment_detail_list').html(htmlStr)
         })
+
+        getAndShow()
+        dayjs.extend(dayjs_plugin_relativeTime)
+        dayjs.locale('zh-cn'); //全局设置为中文
+        function getAndShow() {
+            //获取评论
+            comment.getComment(id, function(res) {
+                // console.log(res);
+                //翻转数组
+                res.data.reverse()
+                res.data.forEach(function(item) {
+                        console.log(item);
+                        item.firstName = item.name.substr(0, 1)
+                            //把时间戳转为时间
+                        item.relitiveDt = dayjs(item.dt).toNow()
+                        console.log(item.relitiveDt);
+
+                    })
+                    // 模板引擎吧数据渲染到页面
+                var htmlStr = template('comment_temp', res);
+                // console.log(htmlStr);
+
+                $('#comment_detail_list').html(htmlStr)
+
+            })
+        }
     </script>
 </body>
 

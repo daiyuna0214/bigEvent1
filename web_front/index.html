@@ -246,7 +246,7 @@
     <script>
         //显示文章类别
         category.show(function(res) {
-            console.log(res);
+            // console.log(res);
             //模板引擎把数据渲染到页面
             var htmlStr = template('show_temp', res);
             $('#level_two').html('<li class="up"></li>' + htmlStr);
@@ -255,10 +255,10 @@
 
         //显示五条热点图
         article.getFiveFocus(function(res) {
-            console.log(res);
+            // console.log(res);
             //模板引擎渲染页面
             var htmlStr = template('focus_temp', res);
-            console.log(htmlStr);
+            // console.log(htmlStr);
             $('#focus_list').html(htmlStr)
         });
 
